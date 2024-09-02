@@ -17,6 +17,7 @@ const App = () => {
   }, []);
   return (
     <React.Fragment>
+      <div className='text-center'><span><b>Tình trạng sân đấu</b></span></div>
       <DataGrid
         id="gridContainer"
         dataSource={employees}

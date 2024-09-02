@@ -14,7 +14,11 @@ import Contact, {
 } from "./routes/contact";
 import StadiumManage from "./routes/StadiumManagement/StadiumManagement";
 import "./index.css";
+import PlayersManagement from "./routes/PlayersManagement/PlayerManagement";
 import LeaguageManagement from "./routes/LeaguageManagement/LeaguageManagement";
+import LeaguageTable from "./routes/matchSchedule/MatchSchedule";
+import MatchSchedule from "./routes/matchSchedule/MatchSchedule";
+import MatchTable from "./routes/matchTable/MatchTable";
 
 const router = createBrowserRouter([
   {
@@ -23,11 +27,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     loader: rootLoader,
     action: rootAction,
-    children:[
-      {
-        path: "contacts/:contactId",
-        element: <Contact />,
-      },
+    children:[     
       {
         path: "stadium-manage",
         element: <StadiumManage />,
@@ -36,6 +36,19 @@ const router = createBrowserRouter([
         path: "leaguage-manage",
         element: <LeaguageManagement />,
       },
+      {
+        path: "players-manage",
+        element: <PlayersManagement />,
+      },
+      {
+        path: "match-table",
+        element: <MatchTable />,
+      },
+      {
+        path: "match-schedule",
+        element: <MatchSchedule />,
+      },
+      
     ]
   },
   

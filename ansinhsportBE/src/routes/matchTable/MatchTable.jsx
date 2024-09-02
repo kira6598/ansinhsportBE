@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import Button from 'devextreme-react/button';
 import 'devextreme/dist/css/dx.light.css'; // You can choose a different theme if desired
-
+import { Link } from 'react-router-dom';
 import DataGrid, {
   Column, Editing, Paging, Lookup,
 } from 'devextreme-react/data-grid';
 import { employees, states } from './data.ts';
 
-const PlayersManagement = () => {
+const MatchTable = () => {
   const [events, setEvents] = useState([]);
   const logEvent = useCallback((eventName) => {
     setEvents((previousEvents) => [eventName, ...previousEvents]);
@@ -17,7 +17,19 @@ const PlayersManagement = () => {
   }, []);
   return (
     <React.Fragment>
-      <div className='text-center'> <span><b >Danh sách vận động viên tham gia giải đấu</b></span></div>
+      <div>
+        <span>Lịch thi đấu theo bảng:</span>
+        <Button className='px-2 mx-2'><Link >A</Link></Button>
+        <Button className='px-2 mx-2'><Link >B</Link></Button>
+        <Button className='px-2 mx-2'><Link >C</Link></Button>
+        <Button className='px-2 mx-2'><Link >D</Link></Button>
+       
+
+        {/* <Link>1/16</Link>
+        <Link>TK</Link>
+        <Link>BK</Link>
+        <Link>CK</Link> */}
+        </div>
       <DataGrid
         id="gridContainer"
         dataSource={employees}
@@ -47,18 +59,29 @@ const PlayersManagement = () => {
 
         <Column
           dataField="Prefix"
-          caption="Giới tính"
+          caption="TT"
         />
-        <Column dataField="FirstName" caption={"Họ và tên"} />
-        <Column dataField="LastName" caption={"Đang đấu"}/>
+        <Column dataField="FirstName" caption={"Ngày"} />
+        <Column dataField="LastName" caption={"Bảng"}/>
         <Column
           dataField="Position"
           width={130}
-          caption={"Địa chỉ"}
+          caption={"Đội 1"}
         />
         <Column
           dataField="StateID"
-          caption="Đội"
+          caption="Tỷ số"
+          width={125}          
+        >
+          <Lookup
+            dataSource={states}
+            displayExpr="Name"
+            valueExpr="ID"
+          />
+        </Column>
+        <Column
+          dataField="StateID"
+          caption="Đội 2"
           width={125}          
         >
           <Lookup
@@ -71,7 +94,7 @@ const PlayersManagement = () => {
           dataField="BirthDate"
           width={125}
           dataType="date"
-          caption={"Ngày đăng ký"}
+          caption={"Sân vận động"}
         />
       </DataGrid>
 
@@ -93,4 +116,4 @@ const PlayersManagement = () => {
     </React.Fragment>
   );
 };
-export default PlayersManagement;
+export default MatchTable;
