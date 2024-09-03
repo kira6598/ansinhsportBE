@@ -1,24 +1,57 @@
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { addLeaguage } from '../../feature/Leaguage/LeaguageAPI';
 
 const LeaguageManagement = () => {
     const [formData, setFormData] = useState({
         file: null,
-        textInput: ''
+        LeaguageName: '',
+        LeaguageAddress:'',
     });
-
+    useEffect(()=>{
+        console.log(formData);
+        
+    },[formData])
+    const dispatch = useDispatch();
     // Handle input changes
     const handleInputChange = (e) => {
         const { name, value, files } = e.target;
+
+        
         setFormData({
             ...formData,
             [name]: files ? files[0] : value // if the input type is file, use files[0], otherwise use value
         });
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent the default form submission behavior
+        if(formData.LeaguageName.length <=0){        
+            
+            toast.error("Tên giải không được để trống",{
+                theme:"colored",
+                position:"bottom-right"
+            })
+            return;
+        }
+        if(formData.LeaguageAddress.length <=0){        
+            
+            toast.error("Địa điểm tổ chức giải không được để trống",{
+                theme:"colored",
+                position:"bottom-right"
+            })
+            return;
+        }
+        let payload = new FormData();
+        payload.append("LeaguageName",formData.LeaguageName);
+        payload.append("LeaguageAddress",formData.LeaguageAddress);
+        payload.append("Capture",formData.file)
         console.log("Form Data:", formData);
+        const ret = await dispatch(addLeaguage(payload));
+        console.log(ret);
+        
         // You can now send formData to your API or perform other actions
     };
 
@@ -45,8 +78,8 @@ const LeaguageManagement = () => {
                             type="text"
                             placeholder="Nhập tên giải đấu"
                             aria-label="Disabled input example"
-                            name="textInput"
-                            value={formData.textInput}
+                            name="LeaguageName"
+                            defaultValue={formData.LeaguageName}
                             onChange={handleInputChange}
                         />
                     </Form.Group>
@@ -56,8 +89,8 @@ const LeaguageManagement = () => {
                             type="text"
                             placeholder="Nhập địa chỉ giải đấu"
                             aria-label="Disabled input example"
-                            name="textInput"
-                            value={formData.textInput}
+                            name="LeaguageAddress"
+                            defaultValue={formData.LeaguageAddress}
                             onChange={handleInputChange}
                         />
                     </Form.Group>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Button from 'devextreme-react/button';
 import 'devextreme/dist/css/dx.light.css'; // You can choose a different theme if desired
 
@@ -6,8 +6,25 @@ import DataGrid, {
   Column, Editing, Paging, Lookup,
 } from 'devextreme-react/data-grid';
 import { employees, states } from './data.ts';
+import { useDispatch } from 'react-redux';
+import { getAllStadium } from '../../feature/Stadium/StadiumAPI.js';
 
 const App = () => {
+  const hostApi = import.meta.env.VITE_HOST_API;
+
+  const dispatch = useDispatch()
+  useEffect(()=>{
+    const fetchData = async (id) =>{     
+       const ret = dispatch(getAllStadium(0))
+       console.log(ret);
+       
+    }
+    console.log("ahuhu");
+    
+    fetchData(1)
+  })
+  console.log(hostApi);
+  
   const [events, setEvents] = useState([]);
   const logEvent = useCallback((eventName) => {
     setEvents((previousEvents) => [eventName, ...previousEvents]);

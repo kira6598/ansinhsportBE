@@ -19,6 +19,11 @@ import LeaguageManagement from "./routes/LeaguageManagement/LeaguageManagement";
 import LeaguageTable from "./routes/matchSchedule/MatchSchedule";
 import MatchSchedule from "./routes/matchSchedule/MatchSchedule";
 import MatchTable from "./routes/matchTable/MatchTable";
+import { Provider } from "react-redux";
+import { store } from './app/store'
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
   {
@@ -56,6 +61,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+     <RouterProvider router={router} />
+     <ToastContainer />
+    </Provider>
   </React.StrictMode>
 );
