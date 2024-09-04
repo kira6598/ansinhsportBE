@@ -2,13 +2,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const prefix = import.meta.env.VITE_HOST_API;
-const getAll = `${prefix}/v1.0/PickleballMangement/GetAllStadium`;
-const add = `${prefix}/v1.0/PickleballMangement/AddStadium`;
-const update = `${prefix}/v1.0/PickleballMangement/UpdateStadium`;
-const deleteStadium = `${prefix}/v1.0/PickleballMangement/DeleteStadium`;
+const getAll = `${prefix}/v1.0/PickleballMangement/GetAllPlayers`;
+// const getById = `${prefix}/v1.0/PickleballMangement/GetLeaguageById`;
+const add = `${prefix}/v1.0/PickleballMangement/AddPlayer`;
+const update = `${prefix}/v1.0/PickleballMangement/UpdatePlayer`;
+const deletePlayer = `${prefix}/v1.0/PickleballMangement/DeletePlayer`;
 
-export const getAllStadium = createAsyncThunk(
-  "stadium/getAllStadium",
+export const GetAllPlayers = createAsyncThunk(
+  "Player/GetAllPlayers",
   async (payload, thunkAPI) => {
     try {
       const response = await axios.get(`${getAll}/${payload}`);
@@ -18,8 +19,8 @@ export const getAllStadium = createAsyncThunk(
     }
   }
 );
-export const addStadium = createAsyncThunk(
-  "stadium/addStadium",
+export const addPlayer = createAsyncThunk(
+  "Player/addPlayer",
   async (payload, thunkAPI) => {
     try {
       const response = await axios.post(`${add}`, payload);
@@ -29,8 +30,8 @@ export const addStadium = createAsyncThunk(
     }
   }
 );
-export const updateStadium = createAsyncThunk(
-  "stadium/updateStadium",
+export const updatePlayer = createAsyncThunk(
+  "Player/updatePlayer",
   async (payload, thunkAPI) => {
     try {
       const response = await axios.put(`${update}`, payload);
@@ -40,11 +41,11 @@ export const updateStadium = createAsyncThunk(
     }
   }
 );
-export const deleteStadiums = createAsyncThunk(
-  "stadium/deleteStadium",
+export const deletePlayerFn = createAsyncThunk(
+  "Player/deletePlayer",
   async (payload, thunkAPI) => {
     try {
-      const response = await axios.delete(`${deleteStadium}/${payload}`);
+      const response = await axios.delete(`${deletePlayer}/${payload}`);
       return response;
     } catch (error) {
       thunkAPI.rejectWithValue(error);

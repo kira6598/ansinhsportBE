@@ -14,6 +14,7 @@ import {
   addStadium,
   deleteStadiums,
   getAllStadium,
+  updateStadium,
 } from "../../feature/Stadium/StadiumAPI.js";
 import { toast } from "react-toastify";
 const StadiumState = [
@@ -69,8 +70,8 @@ const App = () => {
         );
       }
     } else {
-      var ret2 = await dispatch(addStadium(payload));
-      if (ret2.type === "stadium/addStadium/fulfilled") {
+      var ret2 = await dispatch(updateStadium(payload));
+      if (ret2.type === "stadium/updateStadium/fulfilled") {
         toast.success("Cập nhật sân thành công!", { theme: "colored" });
       } else {
         toast.error(
@@ -129,6 +130,7 @@ const App = () => {
         const datas = e.changes[0].data;
 
         const payload = {
+          Id: datas.Id,
           LeaguageId: parseInt(leaguageId),
           MatchDate: convertToUTC(datas.MatchDate),
           MatchName: datas.MatchName,
