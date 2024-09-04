@@ -10,14 +10,28 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { toast } from "react-toastify";
-import { addLeaguage } from "../Leaguage/LeaguageAPI";
-const StadiumPopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
+import {
+  addLeaguage,
+  getLeaguageById,
+} from "../../feature/Leaguage/LeaguageAPI";
+const ligoHost = import.meta.env.VITE_HOST_API;
+
+function formatDate(dateString) {
+  // Parse the date string into a Date object
+  const date = new Date(dateString);
+
+  // Get the month, day, and year
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const year = date.getUTCFullYear();
+
+  // Format the date as mm/dd/yyyy
+  return `${day}/${month}/${year}`;
+}
+const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
-  useEffect(() => {
-    // const ret = dispatch(getAllLeaguage());
-    // console.log(ret);
-  }, [LeaguageId]);
+  console.log(LeaguageId);
 
   const [formData, setFormData] = useState({
     file: null,
@@ -25,11 +39,33 @@ const StadiumPopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
     LeaguageAddress: "",
     StartDate: new Date(),
     EndDate: new Date(),
+    ImageUrl: "",
   });
   useEffect(() => {
     setShow(isShow);
   }, [isShow]);
+  useEffect(() => {
+    const fetchData = async (id) => {
+      var ret = await dispatch(getLeaguageById(id));
+      console.log(ret);
+      if (ret.type === "Leaguage/getLeaguageById/fulfilled") {
+        console.log(formatDate(ret?.payload?.data?.EndDate));
 
+        setFormData({
+          ...formData,
+          LeaguageAddress: ret?.payload?.data?.LeaguageAddress,
+          LeaguageName: ret?.payload?.data?.LeaguageName,
+          StartDate: formatDate(ret?.payload?.data?.StartDate),
+          EndDate: formatDate(ret?.payload?.data?.EndDate),
+          ImageUrl: ligoHost + ret?.payload?.data?.ImageUrl,
+        });
+      } else {
+        toast.error("không tìm thấy giải đấu", { theme: "colored" });
+      }
+    };
+
+    fetchData(LeaguageId);
+  }, [LeaguageId]);
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -58,11 +94,17 @@ const StadiumPopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
     payload.append("LeaguageName", formData.LeaguageName);
     payload.append("LeaguageAddress", formData.LeaguageAddress);
     payload.append("Capture", formData.file);
-    console.log("Form Data:", formData);
     const ret = await dispatch(addLeaguage(payload));
     console.log(ret);
     if (ret.type === "Leaguage/addLeaguage/fulfilled") {
-      toast.success("Thêm mới giải đấu thành công!", { theme: "colored" });
+      toast.success(
+        `${isCreateNew ? `Thêm mới` : `Cập nhật`} giải đấu thành công!`,
+        { theme: "colored" }
+      );
+    } else {
+      toast.error(
+        `Có lỗi xảy ra khi ${isCreateNew ? `Thêm mới` : `Cập nhật`} giải đấu`
+      );
     }
     handleClose();
     // You can now send formData to your API or perform other actions
@@ -83,7 +125,11 @@ const StadiumPopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
             <img
               width={300}
               height={300}
-              src="https://www.cityofredlands.org/sites/main/files/imagecache/medium/main-images/pickleball_leagues.png?1714726581"
+              src={
+                formData.ImageUrl.length > 0
+                  ? formData.ImageUrl
+                  : `https://www.cityofredlands.org/sites/main/files/imagecache/medium/main-images/pickleball_leagues.png?1714726581`
+              }
             ></img>
             <span className="text-center">
               <i>Ảnh giải đấu</i>
@@ -92,7 +138,7 @@ const StadiumPopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
           <div>
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="formFile" className="mb-3">
-                <Form.Label>Ảnh giải đấu</Form.Label>
+                <Form.Label>Thay đổi ảnh giải đấu</Form.Label>
                 <Form.Control
                   type="file"
                   name="file"
@@ -156,11 +202,11 @@ const StadiumPopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
     </Modal>
   );
 };
-StadiumPopup.propTypes = {
+LeaguagePopup.propTypes = {
   isShow: PropTypes.bool,
   LeaguageId: PropTypes.number,
   onClose: PropTypes.func,
   isCreateNew: PropTypes.bool,
   // hasRoleApprove: PropTypes.bool,
 };
-export default StadiumPopup;
+export default LeaguagePopup;
