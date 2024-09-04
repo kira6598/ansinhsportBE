@@ -8,7 +8,7 @@ const add = `${prefix}/v1.0/PickleballMangement/AddPlayer`;
 const update = `${prefix}/v1.0/PickleballMangement/UpdatePlayer`;
 const deletePlayer = `${prefix}/v1.0/PickleballMangement/DeletePlayer`;
 
-export const GetAllPlayers = createAsyncThunk(
+export const getAllPlayers = createAsyncThunk(
   "Player/GetAllPlayers",
   async (payload, thunkAPI) => {
     try {

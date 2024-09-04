@@ -34,12 +34,12 @@ const router = createBrowserRouter([
     action: rootAction,
     children:[     
       {
-        path: "stadium-manage",
-        element: <StadiumManage />,
-      },
-      {
         path: "leaguage-manage",
         element: <LeaguageManagement />,
+      },
+      {
+        path: "stadium-manage",
+        element: <StadiumManage />,
       },
       {
         path: "players-manage",

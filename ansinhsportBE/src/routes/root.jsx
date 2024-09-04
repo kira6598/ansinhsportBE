@@ -47,8 +47,8 @@ export default function Root() {
           </Form>
         </div>
         <nav >
-          <Link to={`/stadium-manage`} className={currLocation == '/stadium-manage' ? "active" : ""}>Quản lý sân</Link>
-          <Link to={`/leaguage-manage`} className={currLocation == '/leaguage-manage' ? "active" : ""}>Quản lý giải</Link>
+        <Link to={`/leaguage-manage`} className={currLocation == '/leaguage-manage' ? "active" : ""}>Quản lý giải</Link>
+          <Link to={`/stadium-manage`} className={currLocation == '/stadium-manage' ? "active" : ""}>Quản lý sân</Link>     
           <Link to={'/players-manage'} className={currLocation == '/players-manage' ? "active" : ""}>Quản lý vận động viên</Link>
           <Link to={`/match-table`} className={currLocation == '/match-table' ? "active" : ""}>Bảng thi đấu</Link>
           <Link to={`/match-schedule`} className={currLocation == '/match-schedule' ? "active" : ""}>Lịch thi đấu</Link>

@@ -24,7 +24,7 @@ const StadiumState = [
   { Id: 3, Name: "Hủy đặt" },
   { Id: 4, Name: "Đã chơi" },
 ];
-function convertToUTC(localTime) {
+export function convertToUTC(localTime) {
   let date = new Date(localTime);
   return date.toISOString(); // returns in UTC format
 }
@@ -82,26 +82,26 @@ const App = () => {
     }
   };
 
-  const onRowInserted = (e) => {
-    logEvent("RowInserted");
-    console.log(e);
-    if (leaguageId && leaguageId > 0) {
-      const payload = {
-        LeaguageId: parseInt(leaguageId),
-        MatchDate: convertToUTC(e.data.MatchDate),
-        MatchName: e.data.MatchName,
-        Name: e.data.StadiumName,
-        Status: e.data.Status,
-        StartDate: convertToUTC(e.data.StartDate),
-      };
-      console.log(payload);
+  // const onRowInserted = (e) => {
+  //   logEvent("RowInserted");
+  //   console.log(e);
+  //   if (leaguageId && leaguageId > 0) {
+  //     const payload = {
+  //       LeaguageId: parseInt(leaguageId),
+  //       MatchDate: convertToUTC(e.data.MatchDate),
+  //       MatchName: e.data.MatchName,
+  //       Name: e.data.StadiumName,
+  //       Status: e.data.Status,
+  //       StartDate: convertToUTC(e.data.StartDate),
+  //     };
+  //     console.log(payload);
 
-      addOrUpdateStadiumAsync(payload, true);
-    } else {
-      toast.error("Vui lòng chọn giải đấu để tiếp tục");
-      return;
-    }
-  };
+  //     addOrUpdateStadiumAsync(payload, true);
+  //   } else {
+  //     toast.error("Vui lòng chọn giải đấu để tiếp tục");
+  //     return;
+  //   }
+  // };
   const onEditingStart = (e) => {
     e.data = _.cloneDeep(e.data);
   };
@@ -123,22 +123,39 @@ const App = () => {
     );
   };
   const onSaved = (e) => {
-    logEvent("onSaved");
     if (leaguageId && leaguageId > 0) {
       const change = e.changes;
+      if(Array.isArray(change) && change.length==0 ){
+        toast.info("Bạn chưa chỉnh sửa gì!",{theme:"colored"})
+        return
+      }
       if (Array.isArray(change) && change.length > 0) {
         const datas = e.changes[0].data;
+        if(Number.isInteger(datas.Id)){
+          const payload = {
+            Id: datas.Id,
+            LeaguageId: parseInt(leaguageId),
+            MatchDate: convertToUTC(datas.MatchDate),
+            MatchName: datas.MatchName,
+            Name: datas.StadiumName,
+            Status: datas.Status,
+            StartDate: convertToUTC(datas.StartDate),
+          };
+          addOrUpdateStadiumAsync(payload, false);
+        }else{
+          const payload = {
+            // Id: datas.Id,
+            LeaguageId: parseInt(leaguageId),
+            MatchDate: convertToUTC(datas.MatchDate),
+            MatchName: datas.MatchName,
+            Name: datas.StadiumName,
+            Status: datas.Status,
+            StartDate: convertToUTC(datas.StartDate),
+          };
+          addOrUpdateStadiumAsync(payload, true);
+        }
 
-        const payload = {
-          Id: datas.Id,
-          LeaguageId: parseInt(leaguageId),
-          MatchDate: convertToUTC(datas.MatchDate),
-          MatchName: datas.MatchName,
-          Name: datas.StadiumName,
-          Status: datas.Status,
-          StartDate: convertToUTC(datas.StartDate),
-        };
-        addOrUpdateStadiumAsync(payload, false);
+        
       } else {
         toast.error("Có lỗi xảy ra khi cập nhật.", { theme: "colored" });
       }
@@ -173,19 +190,12 @@ const App = () => {
         keyExpr="Id"
         allowColumnReordering={true}
         showBorders={true}
-        onRowInserted={onRowInserted}
-        // onInitNewRow={() => logEvent("InitNewRow")}
-        // onRowInserting={() => logEvent("RowInserting")}
+        // onRowInserted={onRowInserted}
         onRowUpdated={onRowUpdated}
-        // onRowUpdated={() => logEvent("RowUpdated")}
-        // onRowRemoving={() => logEvent("RowRemoving")}
         onRowRemoved={onRowRemoved}
-        // onSaving={() => logEvent("Saving")}
         onEditingStart={onEditingStart}
         onRowUpdating={onRowUpdating}
         onSaved={onSaved}
-        // onEditCanceling={() => logEvent("EditCanceling")}
-        // onEditCanceled={() => logEvent("EditCanceled")}
       >
         <Paging enabled={true} />
         <Editing
