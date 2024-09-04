@@ -15,12 +15,9 @@ const App = () => {
   const dispatch = useDispatch()
   useEffect(()=>{
     const fetchData = async (id) =>{     
-       const ret = dispatch(getAllStadium(0))
-       console.log(ret);
-       
-    }
-    console.log("ahuhu");
-    
+       const ret = dispatch(getAllStadium(id))
+       console.log(ret);       
+    }    
     fetchData(1)
   })
   console.log(hostApi);
