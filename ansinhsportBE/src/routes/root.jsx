@@ -2,6 +2,8 @@ import { Link, Outlet, useLocation, Form } from "react-router-dom";
 import { getContacts, createContact } from "../contacts";
 import { useEffect, useState } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css"; // Import Bootstrap Icons
+import { useMedia } from "../feature/hook";
+import { Button, CloseButton } from "react-bootstrap";
 
 export async function loader() {
   const contacts = await getContacts();
@@ -15,6 +17,7 @@ export async function action() {
 export default function Root() {
   const location = useLocation();
   const [currLocation, setCurrLocation] = useState("/");
+  const isMobile = useMedia("(max-width: 800px)");
   useEffect(() => {
     setCurrLocation(location.pathname);
   }, [location]);
@@ -36,10 +39,13 @@ export default function Root() {
     <>
       {isSidebarVisible && (
         <div id="sidebar">
-          <h1>React Router Contacts</h1>
+          <h1>An Sinh Sport</h1>
 
-          <div>
-            <form id="search-form" role="search">
+          <div className="d-flex justify-content-end">
+            {isMobile && <CloseButton onClick={() => setIsSidebarVisible(false)} >
+              {/* <span className="">Đóng</span> */}
+              </CloseButton>}
+            {/* <form id="search-form" role="search">
               <input
                 id="q"
                 aria-label="Search contacts"
@@ -52,7 +58,7 @@ export default function Root() {
             </form>
             <Form method="post">
               <button type="submit">New</button>
-            </Form>
+            </Form> */}
           </div>
           <nav>
             <Link

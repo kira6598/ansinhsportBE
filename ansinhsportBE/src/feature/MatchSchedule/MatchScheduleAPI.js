@@ -7,7 +7,7 @@ const getAll = `${prefix}/v1.0/PickleballMangement/GetAllMatchSchedule`;
 const add = `${prefix}/v1.0/PickleballMangement/AddMatchSchedule`;
 const update = `${prefix}/v1.0/PickleballMangement/UpdateMatchSchedule`;
 const deleteMatchSchedule = `${prefix}/v1.0/PickleballMangement/DeleteMatchSchedule`;
-
+const curentStadium = `${prefix}/v1.0/PickleballMangement/GetCurrentStadium`;
 export const getAllMatchSchedule = createAsyncThunk(
   "MatchSchedule/GetAllMatchSchedules",
   async (payload, thunkAPI) => {
@@ -24,9 +24,22 @@ export const addMatchSchedule = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await axios.post(`${add}`, payload);
-      return response;
+      return { data: response.data }; // Return the response data
+      
     } catch (error) {
-      thunkAPI.rejectWithValue(error);
+      return { error: error.response?.data || "An error occurred" }; // Return the error
+    }
+  }
+);
+export const getCurrentStadium = createAsyncThunk(
+  "MatchSchedule/getCurrentStadium",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await axios.get(`${curentStadium}/${payload}`);
+      return { data: response.data }; // Return the response data
+      
+    } catch (error) {
+      return { error: error.response?.data || "An error occurred" }; // Return the error
     }
   }
 );
@@ -35,7 +48,7 @@ export const updateMatchSchedule = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await axios.put(`${update}`, payload);
-      return response;
+      return {status,data};
     } catch (error) {
       thunkAPI.rejectWithValue(error);
     }
