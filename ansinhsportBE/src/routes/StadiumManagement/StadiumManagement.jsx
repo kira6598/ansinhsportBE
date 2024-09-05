@@ -17,6 +17,10 @@ import {
   updateStadium,
 } from "../../feature/Stadium/StadiumAPI.js";
 import { toast } from "react-toastify";
+const StadiumUseState = [
+  { Id: 0, Name: "Chưa sử dụng" },
+  { Id: 1, Name: "Đang sử dụng" },
+];
 const StadiumState = [
   { Id: 0, Name: "Chưa gọi" },
   { Id: 1, Name: "Đã gọi" },
@@ -52,9 +56,9 @@ const App = () => {
   }, []);
 
   const [events, setEvents] = useState([]);
-  const logEvent = useCallback((eventName) => {
-    setEvents((previousEvents) => [eventName, ...previousEvents]);
-  }, []);
+  // const logEvent = useCallback((eventName) => {
+  //   setEvents((previousEvents) => [eventName, ...previousEvents]);
+  // }, []);
   const clearEvents = useCallback(() => {
     setEvents([]);
   }, []);
@@ -125,37 +129,35 @@ const App = () => {
   const onSaved = (e) => {
     if (leaguageId && leaguageId > 0) {
       const change = e.changes;
-      if(Array.isArray(change) && change.length==0 ){
-        toast.info("Bạn chưa chỉnh sửa gì!",{theme:"colored"})
-        return
+      if (Array.isArray(change) && change.length == 0) {
+        toast.info("Bạn chưa chỉnh sửa gì!", { theme: "colored" });
+        return;
       }
       if (Array.isArray(change) && change.length > 0) {
         const datas = e.changes[0].data;
-        if(Number.isInteger(datas.Id)){
+        if (Number.isInteger(datas.Id)) {
           const payload = {
             Id: datas.Id,
             LeaguageId: parseInt(leaguageId),
-            MatchDate: convertToUTC(datas.MatchDate),
-            MatchName: datas.MatchName,
-            Name: datas.StadiumName,
+            // MatchDate: convertToUTC(datas.MatchDate),
+            // MatchName: datas.MatchName,
+            StadiumNumber: datas.StadiumNumber,
             Status: datas.Status,
-            StartDate: convertToUTC(datas.StartDate),
+            // StartDate: convertToUTC(datas.StartDate),
           };
           addOrUpdateStadiumAsync(payload, false);
-        }else{
+        } else {
           const payload = {
             // Id: datas.Id,
             LeaguageId: parseInt(leaguageId),
-            MatchDate: convertToUTC(datas.MatchDate),
-            MatchName: datas.MatchName,
-            Name: datas.StadiumName,
+            // MatchDate: convertToUTC(datas.MatchDate),
+            // MatchName: datas.MatchName,
+            StadiumNumber: datas.StadiumNumber,
             Status: datas.Status,
-            StartDate: convertToUTC(datas.StartDate),
+            // StartDate: convertToUTC(datas.StartDate),
           };
           addOrUpdateStadiumAsync(payload, true);
         }
-
-        
       } else {
         toast.error("Có lỗi xảy ra khi cập nhật.", { theme: "colored" });
       }
@@ -201,15 +203,23 @@ const App = () => {
         <Editing
           mode="row"
           allowUpdating={true}
-          allowDeleting={true}
+          // allowDeleting={true}
           allowAdding={true}
         />
 
-        <Column dataField="StadiumName" caption="Sân" />
-        <Column dataField="Status" caption={"Tình trạng"}>
+        <Column dataField="StadiumNumber" caption="Sân" />
+        <Column dataField="Status" caption={"Tình trạng đặt sân"}>
           <Lookup dataSource={StadiumState} displayExpr="Name" valueExpr="Id" />
         </Column>
-        <Column
+        <Column dataField="Status" caption={"Tình trạng sử dụng"}>
+          <Lookup
+            dataSource={StadiumUseState}
+            displayExpr="Name"
+            valueExpr="Id"
+          />
+        </Column>
+
+        {/* <Column
           dataField="StartDate"
           caption={"Giờ bắt đầu"}
           dataType={"datetime"}
@@ -221,7 +231,7 @@ const App = () => {
           width={125}
           dataType="date"
           caption={"Ngày thi đấu dự kiến"}
-        />
+        /> */}
       </DataGrid>
 
       <div id="events">
