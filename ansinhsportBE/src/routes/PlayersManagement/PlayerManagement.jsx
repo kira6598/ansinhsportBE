@@ -31,6 +31,21 @@ const PlayersManagement = () => {
   const [dataSource, setDataSource] = useState([]);
   const dispatch = useDispatch();
   const leaguageId = localStorage.getItem("leaguageId");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const ligoHost = import.meta.env.VITE_HOST_API;
+
+  const handleImageChange = (e, data) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Set selected image for rendering in UI or API call
+      setSelectedImage(file);
+      // Handle file upload to the server using API
+      // uploadImageToAPI(file, data);
+    }
+  };
+  useEffect(() => {
+    console.log(selectedImage);
+  }, [selectedImage]);
   useEffect(() => {
     const fetchData = async (leaguageId) => {
       const ret = await dispatch(getAllPlayers(leaguageId));
@@ -40,7 +55,6 @@ const PlayersManagement = () => {
       } else {
         toast.error("Có lỗi xảy ra khi lấy dữ liệu", { theme: "colored" });
       }
-      console.log(ret);
     };
     const leaguageId = localStorage.getItem("leaguageId");
     if (leaguageId && leaguageId > 0) {
@@ -126,39 +140,54 @@ const PlayersManagement = () => {
   const onSaved = (e) => {
     if (leaguageId && leaguageId > 0) {
       const change = e.changes;
-      if (Array.isArray(change) && change.length == 0) {
-        toast.info("Bạn chưa chỉnh sửa gì!", { theme: "colored" });
-        return;
+      const formData = new FormData();
+      if (selectedImage != null) {
+        formData.append("Capture", selectedImage);
       }
       console.log(change);
 
       if (Array.isArray(change) && change.length > 0) {
         const datas = e.changes[0].data;
+
         if (Number.isInteger(datas.Id)) {
           // update
-          const payload = {
-            Id: datas.Id,
-            LeaguageId: parseInt(leaguageId),
-            Address: datas.Address,
-            FullName: datas.FullName,
-            Gender: datas.Gender,
-            Status: datas.Status,
-            RegisterDate: convertToUTC(datas.RegisterDate),
-            Team: datas.Team,
-          };
-          addOrUpdatePlayerAsync(payload, false);
+          // const payload = {
+          //   Id: datas.Id,
+          //   LeaguageId: parseInt(leaguageId),
+          //   Address: datas.Address,
+          //   FullName: datas.FullName,
+          //   Gender: datas.Gender,
+          //   Status: datas.Status,
+          //   RegisterDate: convertToUTC(datas.RegisterDate),
+          //   Team: datas.Team,
+          // };
+          formData.append("Id", datas.Id);
+          formData.append("LeaguageId", parseInt(leaguageId));
+          formData.append("Address", datas.Address);
+          formData.append("FullName", datas.FullName);
+          formData.append("Status", datas.Gender);
+          formData.append("RegisterDate", convertToUTC(datas.RegisterDate));
+          formData.append("Team", datas.Team);
+          addOrUpdatePlayerAsync(formData, false);
         } else {
           // add new
-          const payload = {
-            LeaguageId: parseInt(leaguageId),
-            Address: datas.Address,
-            FullName: datas.FullName,
-            Gender: datas.Gender,
-            Status: datas.Status,
-            RegisterDate: convertToUTC(datas.RegisterDate),
-            Team: datas.Team,
-          };
-          addOrUpdatePlayerAsync(payload, true);
+          // const payload = {
+          //   LeaguageId: parseInt(leaguageId),
+          //   Address: datas.Address,
+          //   FullName: datas.FullName,
+          //   Gender: datas.Gender,
+          //   Status: datas.Status,
+          //   RegisterDate: convertToUTC(datas.RegisterDate),
+          //   Team: datas.Team,
+          // };
+          // formData.append('Id',datas.Id);
+          formData.append("LeaguageId", parseInt(leaguageId));
+          formData.append("Address", datas.Address);
+          formData.append("FullName", datas.FullName);
+          formData.append("Status", datas.Gender);
+          formData.append("RegisterDate", convertToUTC(datas.RegisterDate));
+          formData.append("Team", datas.Team);
+          addOrUpdatePlayerAsync(formData, true);
         }
       } else {
         toast.error("Có lỗi xảy ra khi cập nhật.", { theme: "colored" });
@@ -181,7 +210,13 @@ const PlayersManagement = () => {
     deleteAsync(e.data.Id);
     // dispatch(deleteStadiums(e.data.Id))
   };
-
+  function onCellPrepared(e) {
+    if (e.rowType == "header") {
+      e.cellElement.style.textAlign = "center";
+      e.cellElement.style.fontWeight = "500";
+      e.cellElement.style.color = "black";
+    }
+  }
   return (
     <React.Fragment>
       <div className="text-center">
@@ -202,6 +237,7 @@ const PlayersManagement = () => {
         onEditingStart={onEditingStart}
         onRowUpdating={onRowUpdating}
         onSaved={onSaved}
+        onCellPrepared={onCellPrepared}
       >
         <Paging enabled={true} />
         <Editing
@@ -209,11 +245,58 @@ const PlayersManagement = () => {
           allowUpdating={true}
           allowDeleting={true}
           allowAdding={true}
+          useIcons
         />
 
         <Column dataField="Gender" caption="Giới tính">
           <Lookup dataSource={Gender} valueExpr={"Id"} displayExpr={"Name"} />
         </Column>
+        <Column
+          dataField="ImageUrl"
+          caption="Ảnh đại diện"
+          editCellComponent={({ data }) => (
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageChange(e, data)}
+                color="red"
+              />
+              {selectedImage && (
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Selected Avatar"
+                  style={{ width: "50px", height: "50px", borderRadius: "50%" }}
+                />
+              )}
+            </div>
+          )}
+          cellRender={({ data }) =>
+            data.ImageUrl ? (
+              <img
+                src={ligoHost + data.ImageUrl}
+                alt="Avatar"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            ) : (
+              <img
+                src={`https://media.istockphoto.com/id/1498453978/vi/vec-to/logo-pickleball-v%E1%BB%9Bi-v%E1%BB%A3t-ch%C3%A9o-v%C3%A0-b%C3%B3ng-ph%C3%ADa-tr%C3%AAn-ch%C3%BAng.jpg?s=2048x2048&w=is&k=20&c=O0OrAU257oDl0f2s9gnWRglgL8vw6F0tiIn03dHmRgs=`}
+                alt="Avatar"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                }}
+              />
+            )
+          }
+        />
         <Column dataField="FullName" caption={"Họ và tên"} />
         <Column dataField="Status" caption={"Đang đấu"}>
           <Lookup dataSource={Status} valueExpr={"Id"} displayExpr={"Name"} />
@@ -229,18 +312,6 @@ const PlayersManagement = () => {
           caption={"Ngày đăng ký"}
         />
       </DataGrid>
-
-      {/* <div id="events">
-        <div>
-          <div className="caption">Fired events</div>
-          <Button id="clear" text="Clear" onClick={clearEvents} />
-        </div>
-        <ul>
-          {events.map((event, index) => (
-            <li key={index}>{event}</li>
-          ))}
-        </ul>
-      </div> */}
     </React.Fragment>
   );
 };

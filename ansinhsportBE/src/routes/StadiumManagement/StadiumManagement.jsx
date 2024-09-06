@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Button from "devextreme-react/button";
+import React, { useEffect, useState } from "react";
+// import Button from "devextreme-react/button";
 import "devextreme/dist/css/dx.light.css"; // You can choose a different theme if desired
 import _ from "lodash";
 
@@ -29,8 +29,12 @@ const StadiumState = [
   { Id: 4, Name: "Đã chơi" },
 ];
 export function convertToUTC(localTime) {
-  let date = new Date(localTime);
-  return date.toISOString(); // returns in UTC format
+  if (localTime) {
+    let date = new Date(localTime);
+    return date.toLocaleDateString(); // returns in UTC format
+  } else {
+    return null;
+  }
 }
 const App = () => {
   const dispatch = useDispatch();
@@ -45,7 +49,6 @@ const App = () => {
       } else {
         toast.error("Có lỗi xảy ra khi lấy dữ liệu", { theme: "colored" });
       }
-      console.log(ret);
     };
     const leaguageId = localStorage.getItem("leaguageId");
     if (leaguageId && leaguageId > 0) {
@@ -55,13 +58,13 @@ const App = () => {
     }
   }, []);
 
-  const [events, setEvents] = useState([]);
-  // const logEvent = useCallback((eventName) => {
-  //   setEvents((previousEvents) => [eventName, ...previousEvents]);
+  // const [events, setEvents] = useState([]);
+  // // const logEvent = useCallback((eventName) => {
+  // //   setEvents((previousEvents) => [eventName, ...previousEvents]);
+  // // }, []);
+  // const clearEvents = useCallback(() => {
+  //   setEvents([]);
   // }, []);
-  const clearEvents = useCallback(() => {
-    setEvents([]);
-  }, []);
   const addOrUpdateStadiumAsync = async (payload, isAddStadium) => {
     if (isAddStadium) {
       var ret = await dispatch(addStadium(payload));
@@ -179,6 +182,15 @@ const App = () => {
     deleteAsync(e.data.Id);
     // dispatch(deleteStadiums(e.data.Id))
   };
+  function onCellPrepared(e) {
+    if (e.rowType == "header") {
+      e.cellElement.style.textAlign = "center";
+      e.cellElement.style.fontWeight = "500";
+      e.cellElement.style.color = "black";
+
+      // e.cellElement.css("text-align", "center");
+    }
+  }
   return (
     <React.Fragment>
       <div className="text-center">
@@ -198,6 +210,7 @@ const App = () => {
         onEditingStart={onEditingStart}
         onRowUpdating={onRowUpdating}
         onSaved={onSaved}
+        onCellPrepared={onCellPrepared}
       >
         <Paging enabled={true} />
         <Editing
@@ -205,13 +218,14 @@ const App = () => {
           allowUpdating={true}
           // allowDeleting={true}
           allowAdding={true}
+          useIcons
         />
 
         <Column dataField="StadiumNumber" caption="Sân" />
         <Column dataField="Status" caption={"Tình trạng đặt sân"}>
           <Lookup dataSource={StadiumState} displayExpr="Name" valueExpr="Id" />
         </Column>
-        <Column dataField="Status" caption={"Tình trạng sử dụng"}>
+        <Column dataField="InUse" caption={"Tình trạng sử dụng"}>
           <Lookup
             dataSource={StadiumUseState}
             displayExpr="Name"
@@ -234,7 +248,7 @@ const App = () => {
         /> */}
       </DataGrid>
 
-      <div id="events">
+      {/* <div id="events">
         <div>
           <div className="caption">Fired events</div>
           <Button id="clear" text="Clear" onClick={clearEvents} />
@@ -244,7 +258,7 @@ const App = () => {
             <li key={index}>{event}</li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </React.Fragment>
   );
 };

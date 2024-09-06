@@ -39,12 +39,19 @@ export default function Root() {
     <>
       {isSidebarVisible && (
         <div id="sidebar">
-          <h1>An Sinh Sport</h1>
+          <h1>
+            <img
+              src="https://ansinhsport.com/Themes/m.Medgo/Content/images/logo-web-color.png"
+              height={40}
+            ></img>
+          </h1>
 
           <div className="d-flex justify-content-end">
-            {isMobile && <CloseButton onClick={() => setIsSidebarVisible(false)} >
-              {/* <span className="">Đóng</span> */}
-              </CloseButton>}
+            {isMobile && (
+              <CloseButton onClick={() => setIsSidebarVisible(false)}>
+                {/* <span className="">Đóng</span> */}
+              </CloseButton>
+            )}
             {/* <form id="search-form" role="search">
               <input
                 id="q"
@@ -86,6 +93,12 @@ export default function Root() {
             >
               Lịch thi đấu
             </Link>
+            {/* <Link
+              to={`/screen-manage`}
+              className={currLocation == "/screen-manage" ? "active" : ""}
+            >
+              Quản lý màn hình
+            </Link> */}
           </nav>
         </div>
       )}

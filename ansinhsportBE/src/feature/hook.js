@@ -35,3 +35,24 @@ export function useMedia(query) {
 
   return state;
 }
+export function debounce(func, wait) {
+  let timeout;
+
+  const executedFunction = (...args) => {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+
+  executedFunction.cancel = () => {
+    clearTimeout(timeout);
+  };
+
+  return executedFunction;
+}
+
+// export default debounce;

@@ -47,10 +47,7 @@ const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
   useEffect(() => {
     const fetchData = async (id) => {
       var ret = await dispatch(getLeaguageById(id));
-      console.log(ret);
       if (ret.type === "Leaguage/getLeaguageById/fulfilled") {
-        console.log(formatDate(ret?.payload?.data?.EndDate));
-
         setFormData({
           ...formData,
           LeaguageAddress: ret?.payload?.data?.LeaguageAddress,
@@ -95,7 +92,6 @@ const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
     payload.append("LeaguageAddress", formData.LeaguageAddress);
     payload.append("Capture", formData.file);
     const ret = await dispatch(addLeaguage(payload));
-    console.log(ret);
     if (ret.type === "Leaguage/addLeaguage/fulfilled") {
       toast.success(
         `${isCreateNew ? `Thêm mới` : `Cập nhật`} giải đấu thành công!`,

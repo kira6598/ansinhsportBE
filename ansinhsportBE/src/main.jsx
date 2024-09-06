@@ -8,22 +8,16 @@ import Root, {
   action as rootAction,
 } from "./routes/root";
 import ErrorPage from "./error-page";
-// import Contact, {
-//   loader as contactLoader,
-// } from "./routes/contact";
 import StadiumManage from "./routes/StadiumManagement/StadiumManagement";
 import "./index.css";
 import PlayersManagement from "./routes/PlayersManagement/PlayerManagement";
 import LeaguageManagement from "./routes/LeaguageManagement/LeaguageManagement";
-// import LeaguageTable from "./routes/matchSchedule/MatchSchedule";
 import MatchSchedule from "./routes/matchSchedule/MatchSchedule";
-// import MatchTable from "./routes/matchTable/MatchTable";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import SceenManagement from "./routes/SceenManagement/ScreenManagement";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -51,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "match-schedule",
         element: <MatchSchedule />,
+      },
+      {
+        path: "/screen-manage",
+        element: <SceenManagement />,
       },
     ],
   },

@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
-
-const Score = ({ data, onScoreChange, isEditable }) => {
+import { useCallback, useState } from "react";
+import { debounce } from "../../feature/hook";
+const Score = ({ data, onScoreChange }) => {
   const [firstScore, setFirstScore] = useState(data.FirstTeamPoint);
   const [secondScore, setSecondScore] = useState(data.SecondTeamPoint);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedOnScoreChange = useCallback(
+    debounce((id, field, value) => {
+      onScoreChange(id, field, value);
+    }, 500),
+    [onScoreChange]
+  );
   // Handle changes for First Team's score
   const handleFirstScoreChange = (e) => {
     const newScore = e.target.value;
     setFirstScore(newScore);
-    onScoreChange(data.Id, "FirstTeamPoint", newScore);
+    debouncedOnScoreChange(data.Id, "FirstTeamPoint", newScore);
   };
 
   // Handle changes for Second Team's score
@@ -30,7 +37,6 @@ const Score = ({ data, onScoreChange, isEditable }) => {
         defaultValue={firstScore}
         onChange={handleFirstScoreChange}
         style={{ width: "70px", textAlign: "center" }}
-        readOnly={!isEditable}
       />
       <span> - </span>
       <input
@@ -38,7 +44,6 @@ const Score = ({ data, onScoreChange, isEditable }) => {
         defaultValue={secondScore}
         onChange={handleSecondScoreChange}
         style={{ width: "70px", textAlign: "center" }}
-        readOnly={!isEditable}
       />
     </div>
   );
