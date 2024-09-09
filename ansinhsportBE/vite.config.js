@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/ansinhsportBE/",
   define: {
     "process.env": {
       BASE_PATH: process.env.VITE_BASE_PATH,
