@@ -32,7 +32,7 @@ const PlayersManagement = () => {
   const dispatch = useDispatch();
   const leaguageId = localStorage.getItem("leaguageId");
   const [selectedImage, setSelectedImage] = useState(null);
-  const ligoHost = import.meta.env.VITE_HOST_API;
+  const ligoHost = import.meta.env.VITE_HOST;
 
   const handleImageChange = (e, data) => {
     const file = e.target.files[0];
@@ -274,7 +274,7 @@ const PlayersManagement = () => {
           cellRender={({ data }) =>
             data.ImageUrl ? (
               <img
-                src={ligoHost + data.ImageUrl}
+                src={`${ligoHost}/${data.ImageUrl}`}
                 alt="Avatar"
                 style={{
                   width: "50px",

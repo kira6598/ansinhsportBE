@@ -13,8 +13,9 @@ import { toast } from "react-toastify";
 import {
   addLeaguage,
   getLeaguageById,
+  updateLeaguage,
 } from "../../feature/Leaguage/LeaguageAPI";
-const ligoHost = import.meta.env.VITE_HOST_API;
+const ligoHost = import.meta.env.VITE_HOST;
 
 function formatDate(dateString) {
   // Parse the date string into a Date object
@@ -31,7 +32,6 @@ function formatDate(dateString) {
 const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
-  console.log(LeaguageId);
 
   const [formData, setFormData] = useState({
     file: null,
@@ -40,6 +40,7 @@ const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
     StartDate: new Date(),
     EndDate: new Date(),
     ImageUrl: "",
+    Id: 0,
   });
   useEffect(() => {
     setShow(isShow);
@@ -54,7 +55,7 @@ const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
           LeaguageName: ret?.payload?.data?.LeaguageName,
           StartDate: formatDate(ret?.payload?.data?.StartDate),
           EndDate: formatDate(ret?.payload?.data?.EndDate),
-          ImageUrl: ligoHost + ret?.payload?.data?.ImageUrl,
+          ImageUrl: ligoHost + "/" + ret?.payload?.data?.ImageUrl,
         });
       } else {
         toast.error("không tìm thấy giải đấu", { theme: "colored" });
@@ -88,20 +89,37 @@ const LeaguagePopup = ({ isShow, LeaguageId, isCreateNew, onClose }) => {
       return;
     }
     let payload = new FormData();
+    if (!isCreateNew) {
+      payload.append("Id", LeaguageId);
+    }
     payload.append("LeaguageName", formData.LeaguageName);
     payload.append("LeaguageAddress", formData.LeaguageAddress);
-    payload.append("Capture", formData.file);
-    const ret = await dispatch(addLeaguage(payload));
-    if (ret.type === "Leaguage/addLeaguage/fulfilled") {
-      toast.success(
-        `${isCreateNew ? `Thêm mới` : `Cập nhật`} giải đấu thành công!`,
-        { theme: "colored" }
-      );
-    } else {
-      toast.error(
-        `Có lỗi xảy ra khi ${isCreateNew ? `Thêm mới` : `Cập nhật`} giải đấu`
-      );
+    if (formData.file != null) {
+      payload.append("Capture", formData.file);
     }
+    payload.append("StartDate", formData.StartDate);
+    payload.append("EndDate", formData.EndDate);
+
+    if (isCreateNew) {
+      const ret = await dispatch(addLeaguage(payload));
+      if (ret.type === "Leaguage/addLeaguage/fulfilled") {
+        toast.success(`Thêm mới giải đấu thành công!`, { theme: "colored" });
+      } else {
+        toast.error(`Có lỗi xảy ra khi Thêm mới giải đấu`, {
+          theme: "colored",
+        });
+      }
+    } else {
+      const ret = await dispatch(updateLeaguage(payload));
+      if (ret.type === "Leaguage/updateLeaguage/fulfilled") {
+        toast.success(`Cập nhật giải đấu thành công!`, { theme: "colored" });
+      } else {
+        toast.error(`Có lỗi xảy ra khi Cập nhật giải đấu`, {
+          theme: "colored",
+        });
+      }
+    }
+
     handleClose();
     // You can now send formData to your API or perform other actions
   };

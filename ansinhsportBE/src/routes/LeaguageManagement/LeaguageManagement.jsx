@@ -3,7 +3,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import { List } from "devextreme-react/list";
 import StadiumPopup from "../../Popup/PopUp/LeaguagePopup.jsx";
 import { useDispatch } from "react-redux";
-import { getAllLeaguage } from "../../feature/Leaguage/LeaguageAPI.js";
+import {
+  deleteLeaguageById,
+  getAllLeaguage,
+} from "../../feature/Leaguage/LeaguageAPI.js";
 import LeaguageItem from "./LeaguageItem.jsx";
 import { toast } from "react-toastify";
 const LeaguageManagement = () => {
@@ -58,6 +61,27 @@ const LeaguageManagement = () => {
     },
     [selectionMode, selectedItemKeys, setSelectedItemKeys]
   );
+  const handleItemDelete = async (e) => {
+    const deletedItem = e?.itemData?.Id; // Get the deleted item data
+    console.log(deletedItem);
+    var ret = await dispatch(deleteLeaguageById(deletedItem));
+    if (ret.type === "Leaguage/deleteLeaguageById/fulfilled") {
+      toast.success("Xóa giải thành công!", { theme: "colored" });
+    } else {
+      toast.error("Có lỗi xảy ra khi xóa giải.", { theme: "colored" });
+    }
+    // Call your API to delete the item
+    // fetch(`https://your-api.com/delete/${deletedItem.id}`, {
+    //   method: 'DELETE',
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log('Item deleted successfully', data);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error deleting item:', error);
+    //   });
+  };
   return (
     <React.Fragment>
       <div className="d-flex align-items-center flex-column">
@@ -92,8 +116,10 @@ const LeaguageManagement = () => {
         selectAllMode={"allPages"}
         selectedItemKeys={selectedItemKeys}
         selectByClick={selectByClick}
+        allowItemDeleting={true}
         selectionMode={"single"}
         onOptionChanged={onSelectedItemKeysChange}
+        onItemDeleted={handleItemDelete} // Catch delete event
       ></List>
 
       {isShow && (

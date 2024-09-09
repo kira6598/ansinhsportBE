@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, Form } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { getContacts, createContact } from "../contacts";
 import { useEffect, useState } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css"; // Import Bootstrap Icons
@@ -16,11 +16,16 @@ export async function action() {
 }
 export default function Root() {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const [currLocation, setCurrLocation] = useState("/");
   const isMobile = useMedia("(max-width: 800px)");
   useEffect(() => {
+    if (location.pathname === "/") {
+      navigate("/leaguage-manage");
+    }
     setCurrLocation(location.pathname);
-  }, [location]);
+  }, [location, navigate]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {

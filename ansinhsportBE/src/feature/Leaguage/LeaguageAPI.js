@@ -5,8 +5,8 @@ const prefix = import.meta.env.VITE_HOST_API;
 const getAll = `${prefix}/v1.0/PickleballMangement/GetAllLeaguage`;
 const getById = `${prefix}/v1.0/PickleballMangement/GetLeaguageById`;
 const add = `${prefix}/v1.0/PickleballMangement/AddLeaguage`;
-const update = `${prefix}/v1.0/PickleballMangement/UpdateStadium`;
-const deleteStadium = `${prefix}/v1.0/PickleballMangement/DeleteStadium`;
+const update = `${prefix}/v1.0/PickleballMangement/UpdateLeaguage`;
+const deleteStadium = `${prefix}/v1.0/PickleballMangement/DeleteLeaguage`;
 
 export const getAllLeaguage = createAsyncThunk(
   "Leaguage/getAllLeaguage",
@@ -18,12 +18,32 @@ export const getAllLeaguage = createAsyncThunk(
 export const addLeaguage = createAsyncThunk(
   "Leaguage/addLeaguage",
   async (payload, thunkAPI) => {
-    const response = await axios.post(`${add}`, payload, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response;
+    try {
+      const response = await axios.post(`${add}`, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return { data: response.data };
+    } catch (error) {
+      return { error: error.response?.data || "An error occurred" }; // Return the error
+    }
+  }
+);
+export const updateLeaguage = createAsyncThunk(
+  "Leaguage/updateLeaguage",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await axios.post(`${update}`, payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return { data: response.data }; // Return the response data
+    } catch (error) {
+      return { error: error.response?.data || "An error occurred" }; // Return the error
+    }
+    // Return the error
   }
 );
 export const getLeaguageById = createAsyncThunk(
@@ -31,5 +51,16 @@ export const getLeaguageById = createAsyncThunk(
   async (payload, thunkAPI) => {
     const response = await axios.get(`${getById}/${payload}`);
     return response;
+  }
+);
+export const deleteLeaguageById = createAsyncThunk(
+  "Leaguage/deleteLeaguageById",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await axios.delete(`${deleteStadium}/${payload}`);
+      return { data: response.data }; // Return the response data
+    } catch (error) {
+      return { error: error.response?.data || "An error occurred" }; // Return the error
+    }
   }
 );
