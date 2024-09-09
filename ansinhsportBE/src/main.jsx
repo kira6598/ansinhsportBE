@@ -2,7 +2,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createHashRouter,
+  RouterProvider,
+} from "react-router-dom";
 import Root, {
   loader as rootLoader,
   action as rootAction,
@@ -18,7 +22,7 @@ import { store } from "./app/store";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SceenManagement from "./routes/SceenManagement/ScreenManagement";
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Root />,
@@ -47,7 +51,7 @@ const router = createBrowserRouter([
         element: <MatchSchedule />,
       },
       {
-        path: "/screen-manage",
+        path: "screen-manage",
         element: <SceenManagement />,
       },
     ],
