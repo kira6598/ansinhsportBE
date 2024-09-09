@@ -24,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import SceenManagement from "./routes/SceenManagement/ScreenManagement";
 const router = createHashRouter([
   {
-    path: "/",
+    path: "/*",
     element: <Root />,
     errorElement: <ErrorPage />,
     loader: rootLoader,
